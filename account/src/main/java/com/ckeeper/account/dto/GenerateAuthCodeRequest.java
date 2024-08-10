@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthCodeRequest {
+public class GenerateAuthCodeRequest {
     private String email;
-    private String authCode;
 }
