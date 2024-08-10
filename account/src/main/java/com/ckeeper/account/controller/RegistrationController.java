@@ -1,8 +1,6 @@
 package com.ckeeper.account.controller;
 
-import com.ckeeper.account.dto.AuthCodeRequest;
-import com.ckeeper.account.dto.GenerateAuthCodeRequest;
-import com.ckeeper.account.dto.RegistrationRequest1;
+import com.ckeeper.account.dto.*;
 import com.ckeeper.account.service.RegistrationService;
 import com.ckeeper.account.utils.CacheService;
 import com.ckeeper.account.utils.MailUtil;
@@ -28,10 +26,32 @@ public class RegistrationController {
         this.mailUtil = mailUtil;
     }
 
-    @PostMapping("/register1")
+    @PostMapping("/registration1")
     public ResponseEntity<String> orderRegistration1(@RequestBody RegistrationRequest1 registrationRequest1) {
         try{
             registrationService.register1(registrationRequest1);
+            return ResponseEntity.ok("success");
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    @PostMapping("/registration2")
+    public ResponseEntity<String> orderRegistration2(@RequestBody RegistrationRequest2 registrationRequest2) {
+        try{
+            registrationService.register2(registrationRequest2);
+            return ResponseEntity.ok("success");
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    @PostMapping("/registration3")
+    public ResponseEntity<String> orderRegistration3(@RequestBody RegistrationRequest3 registrationRequest3) {
+        try{
+            registrationService.register3(registrationRequest3);
             return ResponseEntity.ok("success");
         }catch(IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
