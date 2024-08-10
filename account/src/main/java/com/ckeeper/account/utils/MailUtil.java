@@ -51,4 +51,9 @@ public class MailUtil {
         }
         return code.toString();
     }
+
+    public Boolean matchAuthCode(AuthCodeRequest authCodeRequest){
+        String targetAuthCode = cacheService.getAuthCode(authCodeRequest.getEmail());
+        return targetAuthCode.equals(authCodeRequest.getAuthCode());
+    }
 }

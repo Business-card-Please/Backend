@@ -51,11 +51,10 @@ public class RegistrationController {
     @PostMapping("/authcode")
     public ResponseEntity<String> orderAuthCode(@RequestBody AuthCodeRequest authCodeRequest) {
         try{
-            String authCode = cacheService.getAuthCode(authCodeRequest.getEmail());
-            if (authCode != null) {
-                return ResponseEntity.ok("Authentication code: " + authCode);
+            if (mailUtil.matchAuthCode(authCodeRequest)) {
+                return ResponseEntity.ok("correct");
             } else {
-                return ResponseEntity.ok("Authentication code not found");
+                return ResponseEntity.ok("incorrect");
             }
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

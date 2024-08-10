@@ -3,14 +3,13 @@ package com.ckeeper.account.utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class MailUtilTest {
+public class CacheServiceTest {
     @Autowired
-    private MailUtil mailUtil;
+    private CacheService cacheService;
 
     @Test
     public void testCacheFunctionality() {
@@ -18,17 +17,17 @@ public class MailUtilTest {
         String authCode = "123456";
 
         // Save auth code
-        mailUtil.saveAuthCode(email, authCode);
+        cacheService.saveAuthCode(email, authCode);
 
         // Retrieve auth code from cache
-        String cachedAuthCode = mailUtil.getAuthCode(email);
+        String cachedAuthCode = cacheService.getAuthCode(email);
         assertThat(cachedAuthCode).isEqualTo(authCode);
 
         // Delete auth code
-        mailUtil.deleteAuthCode(email);
+        cacheService.deleteAuthCode(email);
 
         // Verify auth code is deleted
-        cachedAuthCode = mailUtil.getAuthCode(email);
+        cachedAuthCode = cacheService.getAuthCode(email);
         assertThat(cachedAuthCode).isNull();
     }
 }
