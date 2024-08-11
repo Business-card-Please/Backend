@@ -26,39 +26,16 @@ public class RegistrationController {
         this.mailUtil = mailUtil;
     }
 
-    @PostMapping("/registration1")
-    public ResponseEntity<String> orderRegistration1(@RequestBody RegistrationRequest1 registrationRequest1) {
+    @PostMapping("/registration")
+    public ResponseEntity<String> orderRegistration(@RequestBody RegistrationRequest registrationRequest){
         try{
-            registrationService.register1(registrationRequest1);
+            registrationService.register(registrationRequest);
             return ResponseEntity.ok("success");
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    @PostMapping("/registration2")
-    public ResponseEntity<String> orderRegistration2(@RequestBody RegistrationRequest2 registrationRequest2) {
-        try{
-            registrationService.register2(registrationRequest2);
-            return ResponseEntity.ok("success");
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-    @PostMapping("/registration3")
-    public ResponseEntity<String> orderRegistration3(@RequestBody RegistrationRequest3 registrationRequest3) {
-        try{
-            registrationService.register3(registrationRequest3);
-            return ResponseEntity.ok("success");
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
+
     @PostMapping("/generate-authcode")
     public ResponseEntity<String> orderGenerateAuthCode(@RequestBody GenerateAuthCodeRequest generateAuthCodeRequest) {
         try{

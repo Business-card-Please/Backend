@@ -14,4 +14,3 @@ public class CacheConfig {
         return new ConcurrentMapCacheManager("authCodes");
     }
 }
-
