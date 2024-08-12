@@ -45,7 +45,6 @@ public class RegistrationService {
             setAccount(dto.getEmail(), dto.getCollegeName(), dto.getPassword());
             setDetail(dto.getEmail(),dto.getName(),dto.getNickname(),dto.getGrade(),dto.getDepartment1(),dto.getDepartment2());
             setKeyword(dto.getEmail(),dto.getKeywords());
-            throw new NullPointerException("test");
         }catch(DataIntegrityViolationException e){
             throw new InvalidRequestException("Data Integrity Violation: "+e.getMessage());
         }catch(IllegalArgumentException e){

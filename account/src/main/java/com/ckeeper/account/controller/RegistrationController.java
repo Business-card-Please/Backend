@@ -50,7 +50,7 @@ public class RegistrationController {
             return ResponseEntity.ok(new ApiResponse(true,"-"));
         }catch(MailSendException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false,e.getMessage()));
-        }catch(Exception e){
+        }catch(InternalServerException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
         }
     }
@@ -64,7 +64,7 @@ public class RegistrationController {
             }
         }catch(InvalidAuthCodeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false,e.getMessage()));
-        }catch(Exception e){
+        }catch(InternalServerException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
         }
     }
