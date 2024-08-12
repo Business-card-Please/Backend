@@ -2,7 +2,9 @@ package com.ckeeper.account.controller;
 
 import com.ckeeper.account.dto.*;
 import com.ckeeper.account.exception.InternalServerException;
+import com.ckeeper.account.exception.InvalidAuthCodeException;
 import com.ckeeper.account.exception.InvalidRequestException;
+import com.ckeeper.account.exception.MailSendException;
 import com.ckeeper.account.service.RegistrationService;
 import com.ckeeper.account.utils.ApiResponse;
 import com.ckeeper.account.utils.CacheService;
@@ -42,24 +44,28 @@ public class RegistrationController {
     }
 
     @PostMapping("/generate-authcode")
-    public ResponseEntity<String> orderGenerateAuthCode(@RequestBody GenerateAuthCodeRequest generateAuthCodeRequest) {
+    public ResponseEntity<ApiResponse> orderGenerateAuthCode(@RequestBody GenerateAuthCodeRequest generateAuthCodeRequest) {
         try{
             mailUtil.sendMail(generateAuthCodeRequest);
-            return ResponseEntity.ok("success");
+            return ResponseEntity.ok(new ApiResponse(true,"-"));
+        }catch(MailSendException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false,e.getMessage()));
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
         }
     }
     @PostMapping("/authcode")
-    public ResponseEntity<String> orderAuthCode(@RequestBody AuthCodeRequest authCodeRequest) {
+    public ResponseEntity<ApiResponse> orderAuthCode(@RequestBody AuthCodeRequest authCodeRequest) {
         try{
             if (mailUtil.matchAuthCode(authCodeRequest)) {
-                return ResponseEntity.ok("correct");
+                return ResponseEntity.ok(new ApiResponse(true,"correct"));
             } else {
-                return ResponseEntity.ok("incorrect");
+                return ResponseEntity.ok(new ApiResponse(true,"incorrect"));
             }
+        }catch(InvalidAuthCodeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false,e.getMessage()));
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
         }
     }
 }

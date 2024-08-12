@@ -2,10 +2,14 @@ package com.ckeeper.account.utils;
 
 import com.ckeeper.account.dto.AuthCodeRequest;
 import com.ckeeper.account.dto.GenerateAuthCodeRequest;
+import com.ckeeper.account.exception.AuthCodeException;
+import com.ckeeper.account.exception.InvalidAuthCodeException;
+import com.ckeeper.account.exception.MailSendException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -20,7 +24,7 @@ public class MailUtil {
     private static final SecureRandom secureRandom = new SecureRandom();
 
     public class MailConstants{
-        private static final String EMAIL_FROM = "seop0937@gmail.com";
+        private static final String EMAIL_FROM = "TEAM.c-Keeper";
         private static final String EMAIL_SUBJECT = "인증 코드";
         private static final String EMAIL_TEXT = "인증 코드는 ";
     }
@@ -32,16 +36,20 @@ public class MailUtil {
     }
 
     public void sendMail(GenerateAuthCodeRequest generateAuthCodeRequest){
-        SimpleMailMessage msg = new SimpleMailMessage();
-        String authCode = generateAuthCode(6);
+        try{
+            SimpleMailMessage msg = new SimpleMailMessage();
+            String authCode = generateAuthCode(6);
 
-        msg.setFrom(MailConstants.EMAIL_FROM);
-        msg.setTo(generateAuthCodeRequest.getEmail());
-        msg.setSubject(MailConstants.EMAIL_SUBJECT);
-        msg.setText(MailConstants.EMAIL_TEXT+authCode);
-        javaMailSender.send(msg);
+            msg.setFrom(MailConstants.EMAIL_FROM);
+            msg.setTo(generateAuthCodeRequest.getEmail());
+            msg.setSubject(MailConstants.EMAIL_SUBJECT);
+            msg.setText(MailConstants.EMAIL_TEXT+authCode);
+            javaMailSender.send(msg);
 
-        cacheService.saveAuthCode(generateAuthCodeRequest.getEmail(),authCode);
+            cacheService.saveAuthCode(generateAuthCodeRequest.getEmail(),authCode);
+        }catch(MailException e){
+            throw new MailSendException("Failed to send email: " + e.getMessage());
+        }
     }
 
     private String generateAuthCode(Integer digit) {
@@ -54,6 +62,9 @@ public class MailUtil {
 
     public Boolean matchAuthCode(AuthCodeRequest authCodeRequest){
         String targetAuthCode = cacheService.getAuthCode(authCodeRequest.getEmail());
+        if(targetAuthCode == null){
+            throw new InvalidAuthCodeException();
+        }
         return targetAuthCode.equals(authCodeRequest.getAuthCode());
     }
 }
