@@ -2,14 +2,10 @@ package com.ckeeper.account.utils;
 
 import com.ckeeper.account.dto.AuthCodeRequest;
 import com.ckeeper.account.dto.GenerateAuthCodeRequest;
-import com.ckeeper.account.exception.AuthCodeException;
 import com.ckeeper.account.exception.InternalServerException;
 import com.ckeeper.account.exception.InvalidAuthCodeException;
 import com.ckeeper.account.exception.MailSendException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
