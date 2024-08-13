@@ -25,15 +25,8 @@ public class LoginService {
     }
 
     public Boolean checkLogin(LoginRequest loginRequest){
-        Optional<AccountEntity> accountEntity = accountRepository.findById(loginRequest.getEmail());
-        if(accountEntity.isPresent()){
-            if(passwordEncoder.matches(loginRequest.getPassword(),accountEntity.get().getPassword())){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
+        return accountRepository.findById(loginRequest.getEmail())
+                .map(accountEntity -> passwordEncoder.matches(loginRequest.getPassword(),accountEntity.getPassword()))
+                .orElse(false);
     }
 }
