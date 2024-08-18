@@ -110,7 +110,7 @@ public class RegistrationService {
         if (!email.contains("@") || email.isEmpty()) {
             throw new IllegalArgumentException("Invalid email format");
         }
-        if(keywords != null && !keywords.isEmpty()) {return;}
+        if(keywords == null || keywords.isEmpty()) {return;}
 
         keywords.forEach(keyword->{
             KeywordEntity keywordEntity = new KeywordEntity();
