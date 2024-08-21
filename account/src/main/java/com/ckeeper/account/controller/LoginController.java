@@ -3,6 +3,8 @@ package com.ckeeper.account.controller;
 import com.ckeeper.account.dto.LoginRequest;
 import com.ckeeper.account.service.LoginService;
 import com.ckeeper.account.utils.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,9 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> orderLogin(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse> orderLogin(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try{
-            Boolean result = loginService.checkLogin(loginRequest);
+            Boolean result = loginService.checkLogin(loginRequest,response);
             if(result){
                 return ResponseEntity.ok(new ApiResponse(true,"-"));
             }else{
