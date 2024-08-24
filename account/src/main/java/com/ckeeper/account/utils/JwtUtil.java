@@ -1,5 +1,6 @@
 package com.ckeeper.account.utils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -29,7 +30,7 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    private String createAccessToken(String email){
+    public String createAccessToken(String email){
         return createToken(email,accessTokenExpiration);
     }
 
@@ -54,6 +55,12 @@ public class JwtUtil {
         response.addCookie(refreshTokenCookie);
     }
 
+    public void addJwtAccessToken(HttpServletResponse response, String email){
+        Cookie accessTokenCookie = createCookie(ACCESS_TOKEN,createAccessToken(email),5 * 60);
+
+        response.addCookie(accessTokenCookie);
+    }
+
     private Cookie createCookie(String name,String value,Integer maxAge){
         Cookie cookie = new Cookie(name,value);
         cookie.setHttpOnly(true);
@@ -62,5 +69,13 @@ public class JwtUtil {
         cookie.setMaxAge(maxAge);
 
         return cookie;
+    }
+
+    public Claims validateToken(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

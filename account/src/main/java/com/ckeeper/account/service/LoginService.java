@@ -3,6 +3,9 @@ package com.ckeeper.account.service;
 import com.ckeeper.account.dto.LoginRequest;
 import com.ckeeper.account.repository.AccountRepository;
 import com.ckeeper.account.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,7 @@ public class LoginService {
         this.jwtUtil = jwtUtil;
     }
 
-    public Boolean checkLogin(LoginRequest loginRequest, HttpServletResponse response){
+    public Boolean checkAccount(LoginRequest loginRequest, HttpServletResponse response){
         return accountRepository.findById(loginRequest.getEmail())
                 .map(accountEntity -> {
                     boolean check = passwordEncoder.matches(loginRequest.getPassword(),accountEntity.getPassword());
@@ -38,5 +41,40 @@ public class LoginService {
                 .orElse(false);
     }
 
+    public Boolean checkLogin(HttpServletRequest request,HttpServletResponse response){
+        try{
+            String accessToken = getTokenValue(request,"access_token");
+            String refreshToken = getTokenValue(request,"refresh_token");
 
+            if(accessToken != null){
+                try{
+                    Claims claims = jwtUtil.validateToken(accessToken);
+                    return true;
+                }catch(ExpiredJwtException e){
+                    if(refreshToken != null){
+                        Claims refreshClaims = jwtUtil.validateToken(refreshToken);
+                        String newAccessToken = jwtUtil.createAccessToken(refreshClaims.getSubject());
+                        System.out.println(newAccessToken);
+                        jwtUtil.addJwtAccessToken(response,newAccessToken);
+                        return true;
+                    }
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String getTokenValue(HttpServletRequest request, String tokenName){
+        Cookie[] cookie = request.getCookies();
+        if(cookie != null){
+            for(Cookie cookieEntity : cookie){
+                if(cookieEntity.getName().equals(tokenName)){
+                    return cookieEntity.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }
