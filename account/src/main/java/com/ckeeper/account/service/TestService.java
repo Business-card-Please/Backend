@@ -1,6 +1,7 @@
 package com.ckeeper.account.service;
 
 import com.ckeeper.account.dto.GenerateAuthCodeRequest;
+import com.ckeeper.account.dto.NicknameRequest;
 import com.ckeeper.account.entity.AccountEntity;
 import com.ckeeper.account.repository.AccountRepository;
 import com.ckeeper.account.repository.DetailRepository;
@@ -36,11 +37,11 @@ public class TestService {
     }
 
     @Transactional
-    public void deleteAccountInfo(GenerateAuthCodeRequest generateAuthCodeRequest){
-        String email = generateAuthCodeRequest.getEmail();
+    public void deleteAccountInfo(NicknameRequest nicknameRequest){
+        String nickname = nicknameRequest.getNickname();
 
-        keywordRepository.deleteAllByEmail(email);
-        detailRepository.deleteAllByNickname(email);
-        accountRepository.deleteById(email);
+        keywordRepository.deleteAllByNickname(nickname);
+        detailRepository.deleteAllByNickname(nickname);
+        accountRepository.deleteById(nickname);
     }
 }
