@@ -46,7 +46,7 @@ public class RegistrationController {
     @PostMapping("/generate-authcode")
     public ResponseEntity<ApiResponse> orderGenerateAuthCode(@RequestBody GenerateAuthCodeRequest generateAuthCodeRequest) {
         try{
-            mailUtil.sendMail(generateAuthCodeRequest);
+            mailUtil.sendMailAuth(generateAuthCodeRequest);
             return ResponseEntity.ok(new ApiResponse(true,"-"));
         }catch(MailSendException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false,e.getMessage()));

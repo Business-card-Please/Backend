@@ -22,8 +22,10 @@ public class MailUtil {
 
     public class MailConstants{
         private static final String EMAIL_FROM = "TEAM.c-Keeper";
-        private static final String EMAIL_SUBJECT = "인증 코드";
-        private static final String EMAIL_TEXT = "인증 코드는 ";
+        private static final String EMAIL_SUBJECT_0 = "인증 코드";
+        private static final String EMAIL_SUBJECT_1 = "아이디 찾기";
+        private static final String EMAIL_TEXT_0 = "인증 코드는 ";
+        private static final String EMAIL_TEXT_1 = "당신의 닉네임은 ";
     }
 
     @Autowired
@@ -32,17 +34,34 @@ public class MailUtil {
         this.cacheService = cacheService;
     }
 
-    public void sendMail(GenerateAuthCodeRequest generateAuthCodeRequest){
+    public void sendMailAuth(GenerateAuthCodeRequest generateAuthCodeRequest){
         try{
             SimpleMailMessage msg = new SimpleMailMessage();
             String authCode = generateAuthCode(6);
 
             msg.setFrom(MailConstants.EMAIL_FROM);
             msg.setTo(generateAuthCodeRequest.getEmail());
-            msg.setSubject(MailConstants.EMAIL_SUBJECT);
-            msg.setText(MailConstants.EMAIL_TEXT+authCode);
+            msg.setSubject(MailConstants.EMAIL_SUBJECT_0);
+            msg.setText(MailConstants.EMAIL_TEXT_0+authCode);
+
             javaMailSender.send(msg);
             cacheService.saveAuthCode(generateAuthCodeRequest.getEmail(),authCode);
+        }catch(MailException e){
+            throw new MailSendException("Failed to send email: " + e.getMessage());
+        }catch(Exception e){
+            throw new InternalServerException("An unexpected error occurred",e);
+        }
+    }
+
+    public void sendMailNickname(GenerateAuthCodeRequest generateAuthCodeRequest, String nickname){
+        try{
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setFrom(MailConstants.EMAIL_FROM);
+            msg.setTo(generateAuthCodeRequest.getEmail());
+            msg.setSubject(MailConstants.EMAIL_SUBJECT_1);
+            msg.setText(MailConstants.EMAIL_TEXT_1+nickname);
+
+            javaMailSender.send(msg);
         }catch(MailException e){
             throw new MailSendException("Failed to send email: " + e.getMessage());
         }catch(Exception e){
