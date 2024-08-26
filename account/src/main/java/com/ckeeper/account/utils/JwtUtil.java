@@ -30,33 +30,33 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String createAccessToken(String email){
-        return createToken(email,accessTokenExpiration);
+    public String createAccessToken(String nickname){
+        return createToken(nickname,accessTokenExpiration);
     }
 
-    private String createRefreshToken(String email){
-        return createToken(email,refreshTokenExpiration);
+    private String createRefreshToken(String nickname){
+        return createToken(nickname,refreshTokenExpiration);
     }
 
-    private String createToken(String email, Long expiration){
+    private String createToken(String nickname, Long expiration){
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(nickname)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    public void addJwtTokens(HttpServletResponse response,String email){
-        Cookie accessTokenCookie = createCookie(ACCESS_TOKEN, createAccessToken(email), 5 * 60); // 5 minutes (300 seconds)
-        Cookie refreshTokenCookie = createCookie(REFRESH_TOKEN, createRefreshToken(email),7 * 24 * 60 * 60); // 7 days (604800 seconds)
+    public void addJwtTokens(HttpServletResponse response,String nickname){
+        Cookie accessTokenCookie = createCookie(ACCESS_TOKEN, createAccessToken(nickname), 5 * 60); // 5 minutes (300 seconds)
+        Cookie refreshTokenCookie = createCookie(REFRESH_TOKEN, createRefreshToken(nickname),7 * 24 * 60 * 60); // 7 days (604800 seconds)
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
     }
 
-    public void addJwtAccessToken(HttpServletResponse response, String email){
-        Cookie accessTokenCookie = createCookie(ACCESS_TOKEN,createAccessToken(email),5 * 60);
+    public void addJwtAccessToken(HttpServletResponse response, String nickname){
+        Cookie accessTokenCookie = createCookie(ACCESS_TOKEN,createAccessToken(nickname),5 * 60);
 
         response.addCookie(accessTokenCookie);
     }

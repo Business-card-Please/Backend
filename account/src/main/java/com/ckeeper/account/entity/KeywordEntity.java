@@ -7,19 +7,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="keyword")
+@Table(name = "keyword")
 public class KeywordEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idx", nullable = false, updatable = false)
     private Long idx;
 
-    @Column(name = "email", nullable = false, length = 255)
-    private String email;
+    @Column(name = "nickname", nullable = false, length = 16)
+    private String nickname;
 
     @Column(name = "keyword", nullable = false, length = 255)
     private String keyword;
 
     @ManyToOne
-    @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
+    @JoinColumn(name = "nickname", referencedColumnName = "nickname", insertable = false, updatable = false)
     private AccountEntity accountEntity;
 }

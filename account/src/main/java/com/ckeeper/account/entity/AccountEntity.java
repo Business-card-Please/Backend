@@ -9,10 +9,14 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name="account")
+@Table(name = "account")
 public class AccountEntity {
+
     @Id
-    @Column(name = "email", nullable = false, length = 255)
+    @Column(name = "nickname", nullable = false, length = 16)
+    private String nickname;
+
+    @Column(name = "email", nullable = false, length = 255, unique = true)
     private String email;
 
     @Column(name = "college_name", nullable = false, length = 20)
@@ -20,10 +24,4 @@ public class AccountEntity {
 
     @Column(name = "password", nullable = false, length = 60)
     private String password;
-
-//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<DetailEntity> detailEntities;
-//
-//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<KeywordEntity> keywordEntities;
 }

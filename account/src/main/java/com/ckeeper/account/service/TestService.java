@@ -40,7 +40,7 @@ public class TestService {
         String email = generateAuthCodeRequest.getEmail();
 
         keywordRepository.deleteAllByEmail(email);
-        detailRepository.deleteAllByEmail(email);
+        detailRepository.deleteAllByNickname(email);
         accountRepository.deleteById(email);
     }
 }

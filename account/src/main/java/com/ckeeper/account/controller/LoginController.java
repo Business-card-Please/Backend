@@ -45,7 +45,7 @@ public class LoginController {
             if(result){
                 return ResponseEntity.ok(new ApiResponse(true,"-"));
             }else{
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"토큰 아닌듯?"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Expired Token"));
             }
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));

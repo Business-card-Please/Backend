@@ -32,10 +32,10 @@ public class LoginService {
     }
 
     public Boolean checkAccount(LoginRequest loginRequest, HttpServletResponse response){
-        return accountRepository.findById(loginRequest.getEmail())
+        return accountRepository.findById(loginRequest.getNickname())
                 .map(accountEntity -> {
                     boolean check = passwordEncoder.matches(loginRequest.getPassword(),accountEntity.getPassword());
-                    if(check){jwtUtil.addJwtTokens(response,loginRequest.getEmail());}
+                    if(check){jwtUtil.addJwtTokens(response,loginRequest.getNickname());}
                     return check;
                 })
                 .orElse(false);
