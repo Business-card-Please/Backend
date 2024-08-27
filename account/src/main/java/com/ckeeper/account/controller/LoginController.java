@@ -31,7 +31,7 @@ public class LoginController {
             if(result){
                 return ResponseEntity.ok(new ApiResponse(true,"-"));
             }else{
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Invalid email or password"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Invalid nickname or password"));
             }
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));

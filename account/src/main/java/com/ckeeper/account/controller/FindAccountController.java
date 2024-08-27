@@ -1,6 +1,7 @@
 package com.ckeeper.account.controller;
 
 import com.ckeeper.account.dto.GenerateAuthCodeRequest;
+import com.ckeeper.account.dto.ResetPasswordRequest;
 import com.ckeeper.account.exception.InternalServerException;
 import com.ckeeper.account.exception.MailSendException;
 import com.ckeeper.account.service.FindAccountService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/api/account/find")
+@RequestMapping("/api/account")
 public class FindAccountController {
     @Autowired
     private final FindAccountService findAccountService;
@@ -25,7 +26,7 @@ public class FindAccountController {
         this.findAccountService = findAccountService;
     }
 
-    @PostMapping("/nickname")
+    @PostMapping("/find/nickname")
     public ResponseEntity<ApiResponse> orderFindNickname(@RequestBody GenerateAuthCodeRequest generateAuthCodeRequest){
         try{
             findAccountService.findNickname(generateAuthCodeRequest);
@@ -36,4 +37,20 @@ public class FindAccountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
         }
     }
+
+    @PostMapping("/reset/pw")
+    public ResponseEntity<ApiResponse> orderResetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
+        try{
+            Boolean result = findAccountService.resetPassword(resetPasswordRequest);
+            if(result){
+                return ResponseEntity.ok(new ApiResponse(true,"-"));
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Equal password"));
+            }
+
+        }catch(InternalServerException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
+        }
+    }
+
 }
