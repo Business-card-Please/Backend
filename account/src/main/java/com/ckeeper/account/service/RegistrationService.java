@@ -1,5 +1,6 @@
 package com.ckeeper.account.service;
 
+import com.ckeeper.account.dto.NicknameRequest;
 import com.ckeeper.account.dto.RegistrationRequest;
 import com.ckeeper.account.entity.AccountEntity;
 import com.ckeeper.account.entity.DetailEntity;
@@ -97,5 +98,11 @@ public class RegistrationService {
 
             keywordRepository.save(keywordEntity);
         });
+    }
+
+    public void checkNickname(NicknameRequest nicknameRequest){
+        if(detailRepository.existsByNickname(nicknameRequest.getNickname())) {
+            throw new DataIntegrityViolationException("Nickname already exists");
+        }
     }
 }

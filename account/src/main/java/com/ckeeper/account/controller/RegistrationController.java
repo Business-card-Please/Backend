@@ -10,6 +10,7 @@ import com.ckeeper.account.utils.ApiResponse;
 import com.ckeeper.account.utils.CacheService;
 import com.ckeeper.account.utils.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -65,6 +66,18 @@ public class RegistrationController {
         }catch(InvalidAuthCodeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false,e.getMessage()));
         }catch(InternalServerException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
+        }
+    }
+
+    @PostMapping("/check-nickname")
+    public ResponseEntity<ApiResponse> orderCheckNickname(@RequestBody NicknameRequest nicknameRequest) {
+        try{
+            registrationService.checkNickname(nicknameRequest);
+            return ResponseEntity.ok(new ApiResponse(true,"-"));
+        }catch(DataIntegrityViolationException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false,e.getMessage()));
+        } catch(InternalServerException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
         }
     }
