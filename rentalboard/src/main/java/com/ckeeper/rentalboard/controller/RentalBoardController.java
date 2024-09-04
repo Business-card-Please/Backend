@@ -41,4 +41,14 @@ public class RentalBoardController {
         }
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<ApiResponse> orderBoardDelete(@RequestBody RentalBoardRequest rentalBoardRequest, HttpServletRequest request){
+        try{
+            rentalBoardService.deleteBoard(request,rentalBoardRequest);
+            return ResponseEntity.ok(new ApiResponse(true,"-"));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
+        }
+    }
+
 }
