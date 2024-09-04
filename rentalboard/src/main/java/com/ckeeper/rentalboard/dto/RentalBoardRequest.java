@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class RentalBoardRequest {
+    private String idx;
     private String owner;
     private String title;
     private String lecture;

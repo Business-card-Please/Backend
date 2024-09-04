@@ -6,6 +6,8 @@ import com.ckeeper.rentalboard.repository.RentalBoardRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RentalBoardService {
     private final RentalBoardRepository rentalBoardRepository;
@@ -23,5 +25,15 @@ public class RentalBoardService {
         rentalBoardEntity.setDepartment(rentalBoardRequest.getDepartment());
 
         rentalBoardRepository.save(rentalBoardEntity);
+    }
+
+    public void updateBoard(HttpServletRequest request, RentalBoardRequest rentalBoardRequest){
+        Optional<RentalBoardEntity> entity = rentalBoardRepository.findById(Long.valueOf(rentalBoardRequest.getIdx()));
+        entity.get().setTitle(rentalBoardRequest.getTitle());
+        entity.get().setLecture(rentalBoardRequest.getLecture());
+        entity.get().setDepartment(rentalBoardRequest.getDepartment());
+        entity.get().setContent(rentalBoardRequest.getContent());
+
+        rentalBoardRepository.save(entity.get());
     }
 }

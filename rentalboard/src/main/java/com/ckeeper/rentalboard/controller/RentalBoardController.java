@@ -31,4 +31,14 @@ public class RentalBoardController {
         }
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<ApiResponse> orderBoardUpdate(@RequestBody RentalBoardRequest rentalBoardRequest, HttpServletRequest request){
+        try{
+            rentalBoardService.updateBoard(request,rentalBoardRequest);
+            return ResponseEntity.ok(new ApiResponse(true,"-"));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
+        }
+    }
+
 }
