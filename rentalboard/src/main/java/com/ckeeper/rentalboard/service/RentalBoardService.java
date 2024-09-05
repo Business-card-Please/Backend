@@ -1,6 +1,7 @@
 package com.ckeeper.rentalboard.service;
 
 import com.ckeeper.rentalboard.dto.RentalBoardRequest;
+import com.ckeeper.rentalboard.dto.RentalBoardSelectRequest;
 import com.ckeeper.rentalboard.entity.RentalBoardEntity;
 import com.ckeeper.rentalboard.repository.RentalBoardRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,5 +44,10 @@ public class RentalBoardService {
         rentalBoardRepository.delete(entity.get());
     }
 
-    public
+    public void selectBoard(HttpServletRequest request, RentalBoardSelectRequest rentalBoardSelectRequest){
+        Optional<RentalBoardEntity> entity = rentalBoardRepository.findById(Long.valueOf(rentalBoardSelectRequest.getIdx()));
+        if(rentalBoardSelectRequest.getType().equals("all")){
+
+        }
+    }
 }

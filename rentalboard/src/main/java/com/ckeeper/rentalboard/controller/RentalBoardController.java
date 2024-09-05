@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/api/rentalboard")
+@RequestMapping("/rentalboard")
 public class RentalBoardController {
 
     private final RentalBoardService rentalBoardService;
@@ -51,4 +51,13 @@ public class RentalBoardController {
         }
     }
 
+    @PostMapping("select")
+    public ResponseEntity<ApiResponse> orderBoardSelect(@RequestBody RentalBoardRequest rentalBoardRequest, HttpServletRequest request){
+        try{
+            rentalBoardService.selectBoard(request);
+            return ResponseEntity.ok(new ApiResponse(true,"-"));
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, e.getMessage()));
+        }
+    }
 }
