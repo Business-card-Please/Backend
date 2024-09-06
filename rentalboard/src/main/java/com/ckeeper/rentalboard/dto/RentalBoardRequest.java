@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Setter
 public class RentalBoardRequest {
     private String idx;
-    private String owner;
     private String title;
     private String lecture;
     private String department;
