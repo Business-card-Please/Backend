@@ -27,4 +27,11 @@ public interface RentalBoardRepository extends JpaRepository<RentalBoardEntity,L
             @Param("keyword") String keyword,
             Pageable pageable
     );
+
+    @Query("SELECT r FROM RentalBoardEntity r WHERE r.cdatetime > :lastDateTime AND (r.content LIKE %:search%) OR (r.title LIKE %:search%) OR (r.lecture LIKE %:search%) OR (r.department LIKE %:search%) ORDER BY r.cdatetime DESC")
+    Page<RentalBoardEntity> findByDateTimeTypeSearch(
+            @Param("lastDateTime") LocalDateTime lastDateTime,
+            @Param("search") String search,
+            Pageable pageable
+    );
 }
