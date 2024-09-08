@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/api/account")
+@RequestMapping("/account")
 public class FindAccountController {
     @Autowired
     private final FindAccountService findAccountService;
@@ -47,7 +47,6 @@ public class FindAccountController {
             }else{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Equal password"));
             }
-
         }catch(InternalServerException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false,e.getMessage()));
         }

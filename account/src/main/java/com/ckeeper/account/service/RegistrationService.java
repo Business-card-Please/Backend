@@ -84,7 +84,7 @@ public class RegistrationService {
         detailEntity.setName(name);
         detailEntity.setGrade(grade);
         detailEntity.setDepartment1(department1);
-        detailEntity.setDepartment2(department2);
+        detailEntity.setDepartment2(department2 == null ? "N/A" : department2);
 
         detailRepository.save(detailEntity);
     }

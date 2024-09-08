@@ -49,8 +49,6 @@ public class LoginService {
             if(accessToken != null){
                 try{
                     Claims claims = jwtUtil.validateToken(accessToken);
-                    System.out.println("claims");
-                    System.out.println(claims.getSubject());
                     return true;
                 }catch(ExpiredJwtException e){
                     if(refreshToken != null){
@@ -66,7 +64,7 @@ public class LoginService {
         return false;
     }
 
-    private String getTokenValue(HttpServletRequest request, String tokenName){
+    public String getTokenValue(HttpServletRequest request, String tokenName){
         Cookie[] cookie = request.getCookies();
         if(cookie != null){
             for(Cookie cookieEntity : cookie){

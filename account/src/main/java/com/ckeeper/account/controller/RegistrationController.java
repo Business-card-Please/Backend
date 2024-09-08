@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/api/account")
+@RequestMapping("/account")
 public class RegistrationController {
     private final RegistrationService registrationService;
     private final CacheService cacheService;
