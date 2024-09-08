@@ -1,20 +1,17 @@
 package com.ckeeper.account.controller;
 
 import com.ckeeper.account.dto.LoginRequest;
-import com.ckeeper.account.entity.AccountEntity;
 import com.ckeeper.account.entity.DetailEntity;
 import com.ckeeper.account.service.EtcService;
 import com.ckeeper.account.service.LoginService;
 import com.ckeeper.account.utils.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
