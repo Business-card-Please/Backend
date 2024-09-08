@@ -9,8 +9,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,10 +55,19 @@ public class RentalBoardService {
         rentalBoardRepository.delete(entity.get());
     }
 
-    public void selectBoard(HttpServletRequest request, RentalBoardSelectRequest rentalBoardSelectRequest) {
-        Optional<RentalBoardEntity> entity = rentalBoardRepository.findById(Long.valueOf(rentalBoardSelectRequest.getIdx()));
-        if (rentalBoardSelectRequest.getType().equals("all")) {
+    public List<RentalBoardEntity> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest,String department1, String department2) {
+        if(rentalBoardSelectRequest.getType().equals("default")) {
+            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
+            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeDefault(
+                    rentalBoardSelectRequest.getDatetime(),
+                    department1,
+                    department2,
+                    pageRequest
+            );
 
+            List<RentalBoardEntity> rentalBoardList = result.getContent();
+            return rentalBoardList;
         }
+        return null;
     }
 }
