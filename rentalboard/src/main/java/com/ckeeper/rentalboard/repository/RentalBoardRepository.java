@@ -18,4 +18,13 @@ public interface RentalBoardRepository extends JpaRepository<RentalBoardEntity,L
             @Param("department2") String department2,
             Pageable pageable
     );
+
+    @Query("SELECT r FROM RentalBoardEntity r WHERE r.cdatetime > :lastDateTime AND (r.department = :department1 OR r.department = :department2) AND (r.content LIKE %:keyword%) OR (r.title LIKE %:keyword%) ORDER BY r.cdatetime DESC")
+    Page<RentalBoardEntity> findByDateTimeTypeHotkeyword(
+            @Param("lastDateTime") LocalDateTime lastDateTime,
+            @Param("department1") String department1,
+            @Param("department2") String department2,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }

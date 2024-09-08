@@ -58,7 +58,6 @@ public class RentalBoardController {
     @PostMapping("/select")
     public ResponseEntity<ApiResponse> orderBoardSelect(@RequestBody RentalBoardSelectRequest rentalBoardSelectRequest, @RequestParam("data1") String department1,@RequestParam("data2") String department2){
         try{
-            System.out.println(department1+" "+department2);
             List<RentalBoardEntity> result = rentalBoardService.selectBoard(rentalBoardSelectRequest,department1,department2);
             return ResponseEntity.ok(new ApiResponse(true,result));
         }catch(Exception e) {

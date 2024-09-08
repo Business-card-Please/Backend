@@ -67,6 +67,18 @@ public class RentalBoardService {
 
             List<RentalBoardEntity> rentalBoardList = result.getContent();
             return rentalBoardList;
+        }else if(rentalBoardSelectRequest.getType().equals("hotkeyword")){
+            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
+            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeHotkeyword(
+                    rentalBoardSelectRequest.getDatetime(),
+                    department1,
+                    department2,
+                    rentalBoardSelectRequest.getData(),
+                    pageRequest
+            );
+
+            List<RentalBoardEntity> rentalBoardList = result.getContent();
+            return rentalBoardList;
         }
         return null;
     }
