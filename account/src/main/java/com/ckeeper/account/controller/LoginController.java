@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -40,7 +42,11 @@ public class LoginController {
         try{
             Boolean result = loginService.checkAccount(loginRequest,response);
             if(result){
-                return ResponseEntity.ok(new ApiResponse(true,"-"));
+                Optional<DetailEntity> info = etcService.getInfo(loginRequest);
+                Map<String,String> detail = new HashMap<>();
+                detail.put("department1",info.get().getDepartment1());
+                detail.put("department2",info.get().getDepartment2());
+                return ResponseEntity.ok(new ApiResponse(true,detail));
             }else{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Invalid nickname or password"));
             }

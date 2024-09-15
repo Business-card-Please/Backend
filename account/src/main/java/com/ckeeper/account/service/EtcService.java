@@ -1,5 +1,6 @@
 package com.ckeeper.account.service;
 
+import com.ckeeper.account.dto.LoginRequest;
 import com.ckeeper.account.entity.AccountEntity;
 import com.ckeeper.account.entity.DetailEntity;
 import com.ckeeper.account.repository.AccountRepository;
@@ -27,5 +28,9 @@ public class EtcService {
         String accessToken = loginService.getTokenValue(request,"access_token");
         Claims claims = this.jwtUtil.validateToken(accessToken);
         return detailRepository.findByNickname(claims.getSubject());
+    }
+
+    public Optional<DetailEntity> getInfo(LoginRequest loginRequest){
+        return detailRepository.findByNickname(loginRequest.getNickname());
     }
 }
