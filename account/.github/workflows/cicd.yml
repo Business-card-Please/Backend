@@ -29,10 +29,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t grovince/c-keeper:account-t${{ github.sha }} .
+        run: docker build -t grovince/c-keeper:account-t1${{ github.sha }} .
 
       - name: Push Docker image to Docker Hub
-        run: docker push grovince/c-keeper:account-t${{ github.sha }}
+        run: docker push grovince/c-keeper:account-t1${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -45,5 +45,5 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           script: |
-            docker pull grovince/c-keeper:account-t${{ github.sha }}
-            kubectl set image deployment/backend-account-deployment backend-account=grovince/c-keeper:account-t${{ github.sha }}
+            docker pull grovince/c-keeper:account-t1${{ github.sha }}
+            kubectl set image deployment/backend-account-deployment backend-account=seophohoho/c-keeper-account:account-t1${{ github.sha }}
