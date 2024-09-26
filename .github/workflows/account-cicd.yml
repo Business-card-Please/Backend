@@ -44,12 +44,12 @@ jobs:
     needs: build
 
     steps:
-      - name: SSH to Server and Update Kubernetes Deployment for Account
+      - name: SSH to Server
         uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          docker pull grovince/c-keeper:account-v${{ github.sha }}
-          kubectl set image deployment/backend-account-deployment backend-account=seophohoho/c-keeper:account-t1
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull grovince/c-keeper:account-v${{ github.sha }}
+            kubectl set image deployment/backend-account-deployment backend-account=seophohoho/c-keeper:account-t1
