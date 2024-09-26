@@ -53,7 +53,5 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-#            docker pull grovince/c-keeper:account-v${{ github.sha }}
             kubectl set image deployment/backend-account backend-account-58599bb6fb-mbllq=grovince/c-keeper:account-v${{ github.sha }}
