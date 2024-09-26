@@ -24,6 +24,10 @@ jobs:
 
       - name: Build with Gradle
         working-directory: ./account
+        env:
+          SPRING_DATASOURCE_URL: ${{ secrets.DATASOURCE_URL_ACCOUNT }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME_ACCOUNT }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD_ACCOUNT }}
         run: ./gradlew build
 
       - name: Login to Docker Hub
@@ -52,4 +56,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker pull grovince/c-keeper:account-v${{ github.sha }}
-            kubectl set image deployment/backend-account-deployment backend-account=seophohoho/c-keeper:account-t1
+            kubectl set image deployment/backend-account backend-account=seophohoho/c-keeper:account-t1

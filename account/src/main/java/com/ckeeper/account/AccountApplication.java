@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.cache.annotation.EnableCaching;
 //
 //
+//
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableCaching
 public class AccountApplication {
