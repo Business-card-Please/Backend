@@ -29,8 +29,11 @@ public class LoginController {
 
     private final EtcService etcService;
 
-    @Value("${redirect.url}")
-    private String url;
+    @Value("${redirect.url1}")
+    private String url1;
+
+    @Value("${redirect.url2}")
+    private String url2;
 
     public LoginController(LoginService loginService, EtcService etcService) {
         this.loginService = loginService;
@@ -65,21 +68,33 @@ public class LoginController {
                     Optional<DetailEntity> test = etcService.getAccountInfo(request);
                     String data1 = URLEncoder.encode(test.get().getDepartment1(), StandardCharsets.UTF_8);
                     String data2 = URLEncoder.encode(test.get().getDepartment2(), StandardCharsets.UTF_8);
-                    String redirectUrl = String.format("%s/rentalboard/select?data1=%s&data2=%s",url,data1,data2);
+                    String redirectUrl = String.format("%s/rentalboard/select?data1=%s&data2=%s",url1,data1,data2);
                     return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
                             .header(HttpHeaders.LOCATION, redirectUrl)
                             .build();
                 }else if(originUrl.contains("/rentalboard/create")) {
                     return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION, url+"/rentalboard/create")
+                            .header(HttpHeaders.LOCATION, url1+"/rentalboard/create")
                             .build();
                 }else if(originUrl.contains("/rentalboard/delete")){
                     return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION, url+"/rentalboard/delete")
+                            .header(HttpHeaders.LOCATION, url1+"/rentalboard/delete")
                             .build();
                 }else if(originUrl.contains("/rentalboard/update")){
                     return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION, url+"/rentalboard/update")
+                            .header(HttpHeaders.LOCATION, url1+"/rentalboard/update")
+                            .build();
+                }else if(originUrl.contains("/chat/create")){
+                    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
+                            .header(HttpHeaders.LOCATION, url2+"/chat/create")
+                            .build();
+                }else if(originUrl.contains("/chat/enter")){
+                    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
+                            .header(HttpHeaders.LOCATION,url2+"/chat/enter")
+                            .build();
+                }else if(originUrl.contains("/chat/send")){
+                    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
+                            .header(HttpHeaders.LOCATION,url2+"chat/send")
                             .build();
                 }
                 return ResponseEntity.ok(new ApiResponse(true,"-"));

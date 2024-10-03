@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateRoomRequest {
-    String boardId;
+    Long boardId;
     String host;
     String guest;
 }
