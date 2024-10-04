@@ -1,10 +1,13 @@
 package com.ckeeper.chat.config;
 
+import com.ckeeper.chat.dto.MessageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +20,8 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         String nickname = (String) session.getAttributes().get("nickname");
         if(nickname!=null){
             sessions.put(nickname,session);
-            System.out.println("WebSocket 연결 성공 - nickname: " + nickname);
         }else {
-            // nickname이 없으면 WebSocket 연결을 종료
-            System.out.println("nickname이 없어서 WebSocket 연결 종료");
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason("nickname이 없습니다."));
+            session.close(CloseStatus.NOT_ACCEPTABLE.withReason("Not found nickname."));
         }
     }
 
@@ -30,7 +30,20 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         String nickname = (String) session.getAttributes().get("nickname");
         if (nickname != null) {
             sessions.remove(nickname);
-            System.out.println("WebSocket 연결 종료 - nickname: " + nickname);
+            System.out.println("WebSocket disconnected - nickname: " + nickname);
         }
+    }
+
+    public void handleSendMessage(WebSocketSession session, MessageRequest msg) {
+        try {
+            String messageToSend = String.format("From %s: %s", msg.getSpeaker(), msg.getContent());
+            session.sendMessage(new TextMessage(messageToSend));  // 실시간으로 메시지 전송
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public WebSocketSession getSession(String nickname){
+        return sessions.get(nickname);
     }
 }

@@ -1,6 +1,7 @@
 package com.ckeeper.chat.controller;
 
 import com.ckeeper.chat.dto.EnterRequest;
+import com.ckeeper.chat.dto.MessageRequest;
 import com.ckeeper.chat.dto.RoomRequest;
 import com.ckeeper.chat.model.Room;
 import com.ckeeper.chat.repository.RoomRepository;
@@ -29,5 +30,10 @@ public class ChatController {
     @PostMapping("/enter")
     public void orderEnterRoom(@RequestBody EnterRequest req) {
         chatService.enterRoom(req);
+    }
+
+    @PostMapping("/send")
+    public void orderSendMsg(@RequestBody MessageRequest req){
+        chatService.sendMsg(req);
     }
 }
