@@ -59,7 +59,6 @@ public class ChatService {
 
         // 새로운 채팅 기록 생성
         ChatHistory newChat = new ChatHistory(dto.getSpeaker(), dto.getContent());
-        newChat.setSendTime(LocalDateTime.now());
 
         // 채팅 기록을 Room의 history에 저장
         room.getHistory().put(String.valueOf(System.currentTimeMillis()), newChat);

@@ -45,7 +45,8 @@ public class LoginService {
         try{
             String accessToken = getTokenValue(request,"access_token");
             String refreshToken = getTokenValue(request,"refresh_token");
-
+            System.out.println(accessToken);
+            System.out.println(refreshToken);
             if(accessToken != null){
                 try{
                     Claims claims = jwtUtil.validateToken(accessToken);

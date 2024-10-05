@@ -53,6 +53,11 @@ public class JwtUtil {
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
+
+        response.setHeader("Set-Cookie", String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=None; Secure",
+                accessTokenCookie.getName(), accessTokenCookie.getValue(), accessTokenCookie.getMaxAge()));
+        response.addHeader("Set-Cookie", String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=None; Secure",
+                refreshTokenCookie.getName(), refreshTokenCookie.getValue(), refreshTokenCookie.getMaxAge()));
     }
 
     public void addJwtAccessToken(HttpServletResponse response, String nickname){
@@ -64,7 +69,7 @@ public class JwtUtil {
     private Cookie createCookie(String name,String value,Integer maxAge){
         Cookie cookie = new Cookie(name,value);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(maxAge);
 

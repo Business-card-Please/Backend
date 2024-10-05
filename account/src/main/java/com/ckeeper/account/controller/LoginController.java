@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -64,6 +65,14 @@ public class LoginController {
             Boolean result = loginService.checkLogin(request,response);
             if(result){
                 String originUrl = request.getHeader("X-Original-URI");
+
+                HttpHeaders headers = new HttpHeaders();
+
+                // Allow CORS Headers to be preserved during the redirect
+                headers.set("Access-Control-Allow-Origin", "http://localhost:5500");
+                headers.set("Access-Control-Allow-Credentials", "true");
+
+
                 if(originUrl.contains("/rentalboard/select")){
                     Optional<DetailEntity> test = etcService.getAccountInfo(request);
                     String data1 = URLEncoder.encode(test.get().getDepartment1(), StandardCharsets.UTF_8);
@@ -85,16 +94,19 @@ public class LoginController {
                             .header(HttpHeaders.LOCATION, url1+"/rentalboard/update")
                             .build();
                 }else if(originUrl.contains("/chat/create")){
+                    System.out.println("어디까지 왔나?111_create");
                     return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
                             .header(HttpHeaders.LOCATION, url2+"/chat/create")
                             .build();
                 }else if(originUrl.contains("/chat/enter")){
+                    System.out.println("어디까지 왔나?111_enter");
                     return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
                             .header(HttpHeaders.LOCATION,url2+"/chat/enter")
                             .build();
                 }else if(originUrl.contains("/chat/send")){
+                    System.out.println("어디까지 왔나?111_send");
                     return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION,url2+"chat/send")
+                            .header(HttpHeaders.LOCATION,url2+"/chat/send")
                             .build();
                 }
                 return ResponseEntity.ok(new ApiResponse(true,"-"));
