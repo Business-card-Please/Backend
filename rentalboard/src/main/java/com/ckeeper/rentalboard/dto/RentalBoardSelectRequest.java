@@ -12,4 +12,6 @@ public class RentalBoardSelectRequest {
     Integer size;
     String type;
     String data;
+    String department1;
+    String department2;
 }

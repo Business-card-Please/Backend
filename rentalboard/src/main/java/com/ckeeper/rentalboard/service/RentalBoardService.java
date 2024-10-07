@@ -5,6 +5,7 @@ import com.ckeeper.rentalboard.dto.RentalBoardSelectRequest;
 import com.ckeeper.rentalboard.entity.RentalBoardEntity;
 import com.ckeeper.rentalboard.repository.RentalBoardRepository;
 import com.ckeeper.rentalboard.utils.JwtUtil;
+import com.ckeeper.rentalboard.utils.S2S;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,13 +56,13 @@ public class RentalBoardService {
         rentalBoardRepository.delete(entity.get());
     }
 
-    public List<RentalBoardEntity> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest,String department1, String department2) {
+    public List<RentalBoardEntity> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest) {
         if(rentalBoardSelectRequest.getType().equals("default")) {
             PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
             Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeDefault(
                     rentalBoardSelectRequest.getDatetime(),
-                    department1,
-                    department2,
+                    rentalBoardSelectRequest.getDepartment1(),
+                    rentalBoardSelectRequest.getDepartment2(),
                     pageRequest
             );
 
@@ -71,8 +72,8 @@ public class RentalBoardService {
             PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
             Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeHotkeyword(
                     rentalBoardSelectRequest.getDatetime(),
-                    department1,
-                    department2,
+                    rentalBoardSelectRequest.getDepartment1(),
+                    rentalBoardSelectRequest.getDepartment2(),
                     rentalBoardSelectRequest.getData(),
                     pageRequest
             );

@@ -7,14 +7,12 @@ import com.ckeeper.chat.dto.RoomRequest;
 import com.ckeeper.chat.model.Room;
 import com.ckeeper.chat.repository.RoomRepository;
 import com.ckeeper.chat.service.ChatService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/chat")
@@ -30,6 +28,7 @@ public class ChatController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> orderCreateRoom(@RequestBody RoomRequest req, HttpServletResponse response) {
         try{
+            System.out.println("제발 여기 좀 실행 되주세요ㅠ픂치ㅠㅡㅍ치ㅠㅊㅍ");
             chatService.createOrGetRoom(req);
             // CORS 헤더 추가 확인
 //            response.setHeader("Access-Control-Allow-Origin", "http://localhost:5500");
