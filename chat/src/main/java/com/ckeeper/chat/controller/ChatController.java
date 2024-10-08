@@ -4,9 +4,9 @@ import com.ckeeper.chat.dto.ApiResponse;
 import com.ckeeper.chat.dto.EnterRequest;
 import com.ckeeper.chat.dto.MessageRequest;
 import com.ckeeper.chat.dto.RoomRequest;
-import com.ckeeper.chat.model.Room;
 import com.ckeeper.chat.repository.RoomRepository;
 import com.ckeeper.chat.service.ChatService;
+import com.ckeeper.chat.util.S2S;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -19,39 +19,51 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
     private final ChatService chatService;
     private final RoomRepository roomRepository;
+    private final S2S s2S;
 
-    ChatController(ChatService chatService, RoomRepository roomRepository) {
+    ChatController(ChatService chatService, RoomRepository roomRepository,S2S s2S) {
         this.chatService = chatService;
         this.roomRepository = roomRepository;
+        this.s2S = s2S;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> orderCreateRoom(@RequestBody RoomRequest req, HttpServletResponse response) {
+    public ResponseEntity<ApiResponse> orderCreateRoom(@RequestBody RoomRequest req, HttpServletRequest request, HttpServletResponse response) {
         try{
-            System.out.println("제발 여기 좀 실행 되주세요ㅠ픂치ㅠㅡㅍ치ㅠㅊㅍ");
+            this.s2S.sendToAuthServer(request);
             chatService.createOrGetRoom(req);
-            // CORS 헤더 추가 확인
-//            response.setHeader("Access-Control-Allow-Origin", "http://localhost:5500");
-//            response.setHeader("Access-Control-Allow-Credentials", "true");
-//
-//            // 헤더 디버깅 로그 출력
-//            System.out.println("Access-Control-Allow-Origin: " + response.getHeader("Access-Control-Allow-Origin"));
 
             return ResponseEntity.ok(new ApiResponse(true,""));
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
         }
     }
 
     @PostMapping("/enter")
-    public void orderEnterRoom(@RequestBody EnterRequest req) {
-        System.out.println("어디까지 왔나?222_enter");
-        chatService.enterRoom(req);
+    public ResponseEntity<ApiResponse> orderEnterRoom(@RequestBody EnterRequest req,HttpServletRequest request) {
+        try{
+            this.s2S.sendToAuthServer(request);
+            chatService.enterRoom(req);
+            return ResponseEntity.ok(new ApiResponse(true,""));
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
+        }
     }
 
     @PostMapping("/send")
-    public void orderSendMsg(@RequestBody MessageRequest req){
-        System.out.println("어디까지 왔나?222_send");
-        chatService.sendMsg(req);
+    public ResponseEntity<ApiResponse> orderSendMsg(@RequestBody MessageRequest req,HttpServletRequest request){
+        try{
+            this.s2S.sendToAuthServer(request);
+            chatService.sendMsg(req);
+            return ResponseEntity.ok(new ApiResponse(true,""));
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
+        }
     }
 }
