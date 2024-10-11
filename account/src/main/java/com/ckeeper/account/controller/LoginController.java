@@ -45,6 +45,7 @@ public class LoginController {
                 Map<String,String> detail = new HashMap<>();
                 detail.put("department1",info.get().getDepartment1());
                 detail.put("department2",info.get().getDepartment2());
+                detail.put("nickname",info.get().getNickname());
                 return ResponseEntity.ok(new ApiResponse(true,detail));
             }else{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Invalid nickname or password"));
