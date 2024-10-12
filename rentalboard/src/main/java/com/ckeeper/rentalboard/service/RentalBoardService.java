@@ -57,40 +57,33 @@ public class RentalBoardService {
     }
 
     public List<RentalBoardEntity> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest) {
+        Page<RentalBoardEntity> result = null;
+        PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
+
         if(rentalBoardSelectRequest.getType().equals("default")) {
-            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
-            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeDefault(
+            result = rentalBoardRepository.findByDateTimeTypeDefault(
                     rentalBoardSelectRequest.getDatetime(),
                     rentalBoardSelectRequest.getDepartment1(),
                     rentalBoardSelectRequest.getDepartment2(),
                     pageRequest
             );
-
-            List<RentalBoardEntity> rentalBoardList = result.getContent();
-            return rentalBoardList;
         }else if(rentalBoardSelectRequest.getType().equals("hotkeyword")){
-            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
-            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeHotkeyword(
+            result = rentalBoardRepository.findByDateTimeTypeHotkeyword(
                     rentalBoardSelectRequest.getDatetime(),
                     rentalBoardSelectRequest.getDepartment1(),
                     rentalBoardSelectRequest.getDepartment2(),
                     rentalBoardSelectRequest.getData(),
                     pageRequest
             );
-
-            List<RentalBoardEntity> rentalBoardList = result.getContent();
-            return rentalBoardList;
         }else if(rentalBoardSelectRequest.getType().equals("search")){
-            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
-            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeSearch(
+            result = rentalBoardRepository.findByDateTimeTypeSearch(
                     rentalBoardSelectRequest.getDatetime(),
                     rentalBoardSelectRequest.getData(),
                     pageRequest
             );
-
-            List<RentalBoardEntity> rentalBoardList = result.getContent();
-            return rentalBoardList;
         }
-        return null;
+
+        List<RentalBoardEntity> rentalBoardList = result.getContent();
+        return rentalBoardList;
     }
 }
