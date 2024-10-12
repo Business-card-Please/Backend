@@ -5,17 +5,16 @@ import com.ckeeper.rentalboard.dto.RentalBoardSelectRequest;
 import com.ckeeper.rentalboard.entity.RentalBoardEntity;
 import com.ckeeper.rentalboard.repository.RentalBoardRepository;
 import com.ckeeper.rentalboard.utils.JwtUtil;
-import com.ckeeper.rentalboard.utils.S2S;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -56,7 +55,7 @@ public class RentalBoardService {
         rentalBoardRepository.delete(entity.get());
     }
 
-    public List<RentalBoardEntity> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest) {
+    public Map<String,Object> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest) {
         Page<RentalBoardEntity> result = null;
         PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
 
@@ -84,6 +83,10 @@ public class RentalBoardService {
         }
 
         List<RentalBoardEntity> rentalBoardList = result.getContent();
-        return rentalBoardList;
+
+        Map<String,Object> test = new HashMap<>();
+        test.put("current",rentalBoardList);
+        test.put("isNext",result.hasNext());
+        return test;
     }
 }

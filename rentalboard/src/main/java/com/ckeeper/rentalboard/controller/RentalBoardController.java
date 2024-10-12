@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/rentalboard")
@@ -69,7 +70,7 @@ public class RentalBoardController {
     public ResponseEntity<ApiResponse> orderBoardSelect(@RequestBody RentalBoardSelectRequest rentalBoardSelectRequest,HttpServletRequest request){
         try{
             s2S.sendToAuthServer(request);
-            List<RentalBoardEntity> result = rentalBoardService.selectBoard(rentalBoardSelectRequest);
+            Map<String,Object> result = rentalBoardService.selectBoard(rentalBoardSelectRequest);
             return ResponseEntity.ok(new ApiResponse(true,result));
         }catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
