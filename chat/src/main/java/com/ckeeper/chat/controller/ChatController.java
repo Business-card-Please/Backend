@@ -36,52 +36,16 @@ public class ChatController {
         }
     }
 
-//    @PostMapping("/send")
-//    public ResponseEntity<ApiResponse> orderSendMessage(@RequestBody MessageRequest bodyReq,HttpServletRequest httpReq){
-//        try{
-//            this.s2S.sendToAuthServer(httpReq);
-//            Room result = chatService
-//        }
-//
-//    }
-
-//    @PostMapping("/create")
-//    public ResponseEntity<ApiResponse> orderCreateRoom(@RequestBody RoomRequest req, HttpServletRequest request, HttpServletResponse response) {
-//        try{
-//            this.s2S.sendToAuthServer(request);
-//            chatService.createOrGetRoom(req);
-//
-//            return ResponseEntity.ok(new ApiResponse(true,""));
-//        }catch(RuntimeException e){
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
-//        }catch(Exception e){
-//            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
-//        }
-//    }
-//
-//    @PostMapping("/enter")
-//    public ResponseEntity<ApiResponse> orderEnterRoom(@RequestBody EnterRequest req,HttpServletRequest request) {
-//        try{
-//            this.s2S.sendToAuthServer(request);
-//            chatService.enterRoom(req);
-//            return ResponseEntity.ok(new ApiResponse(true,""));
-//        }catch(RuntimeException e){
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
-//        }catch(Exception e){
-//            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
-//        }
-//    }
-//
-//    @PostMapping("/send")
-//    public ResponseEntity<ApiResponse> orderSendMsg(@RequestBody MessageRequest req,HttpServletRequest request){
-//        try{
-//            this.s2S.sendToAuthServer(request);
-//            chatService.sendMsg(req);
-//            return ResponseEntity.ok(new ApiResponse(true,""));
-//        }catch(RuntimeException e){
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
-//        }catch(Exception e){
-//            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
-//        }
-//    }
+    @PostMapping("/send")
+    public ResponseEntity<ApiResponse> orderSendMessage(@RequestBody MessageRequest bodyReq,HttpServletRequest httpReq){
+        try{
+            this.s2S.sendToAuthServer(httpReq);
+            chatService.sendOrSaveMsg(bodyReq);
+            return ResponseEntity.ok(new ApiResponse(true,""));
+        }catch(RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
+        }
+    }
 }
