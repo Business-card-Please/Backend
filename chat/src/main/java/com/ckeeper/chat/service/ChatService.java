@@ -18,13 +18,18 @@ public class ChatService {
        this.chatHandler = chatHandler;
    }
 
+   private String createRoomId(EnterRequest dto){
+       return dto.getBoardId()+"_"+dto.getHost()+"_"+dto.getGuest();
+   }
+
    private Optional<Room> findRoom(EnterRequest dto){
-       return roomRepository.findById(dto.getBoardId());
+       return roomRepository.findById(createRoomId(dto));
    }
 
    private Room createRoom(EnterRequest dto){
        Room newRoom = new Room();
-       newRoom.setId(dto.getBoardId());
+       newRoom.setId(createRoomId(dto));
+       newRoom.setBoardId(dto.getBoardId());
        newRoom.setHost(dto.getHost());
        newRoom.setGuest(dto.getGuest());
        roomRepository.save(newRoom);

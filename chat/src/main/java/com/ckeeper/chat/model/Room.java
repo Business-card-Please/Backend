@@ -13,7 +13,8 @@ import java.util.Map;
 @Document(collection = "Room")
 public class Room {
     @Id
-    private Long id;
+    private String id;
+    private Long boardId;
     private String host;
     private String guest;
     private Map<String,ChatHistory> history = new HashMap<>();

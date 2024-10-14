@@ -8,6 +8,5 @@ import lombok.Setter;
 public class MessageRequest {
     private String roomId;
     private String speaker;
-    private String listner;
     private String content;
 }
