@@ -1,6 +1,7 @@
 package com.ckeeper.chat.config;
 
 import com.ckeeper.chat.dto.MessageRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -14,6 +15,7 @@ import java.util.Map;
 @Component
 public class WebSocketChatHandler extends TextWebSocketHandler {
     private Map<String, WebSocketSession> sessions = new HashMap<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -36,8 +38,8 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     public void handleSendMessage(WebSocketSession session, MessageRequest msg) {
         try {
-            String messageToSend = String.format("From %s: %s", msg.getSpeaker(), msg.getContent());
-            session.sendMessage(new TextMessage(messageToSend));  // 실시간으로 메시지 전송
+            String jsonMessage = objectMapper.writeValueAsString(msg);
+            session.sendMessage(new TextMessage(jsonMessage));
         } catch (IOException e) {
             e.printStackTrace();
         }
