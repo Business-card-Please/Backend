@@ -89,4 +89,13 @@ public class RentalBoardService {
         test.put("isNext",result.hasNext());
         return test;
     }
+
+    public Integer selectBoardDetail(long boardIdx,String viewer){
+        Optional<RentalBoardEntity> entity = rentalBoardRepository.findById(boardIdx);
+        if(!entity.get().getNickname().equals(viewer)){
+            entity.get().setViewcount(entity.get().getViewcount()+1);
+            rentalBoardRepository.save(entity.get());
+        }
+        return entity.get().getViewcount();
+    }
 }

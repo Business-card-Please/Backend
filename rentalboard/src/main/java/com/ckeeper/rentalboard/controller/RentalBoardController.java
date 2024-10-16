@@ -2,7 +2,6 @@ package com.ckeeper.rentalboard.controller;
 
 import com.ckeeper.rentalboard.dto.RentalBoardRequest;
 import com.ckeeper.rentalboard.dto.RentalBoardSelectRequest;
-import com.ckeeper.rentalboard.entity.RentalBoardEntity;
 import com.ckeeper.rentalboard.service.RentalBoardService;
 import com.ckeeper.rentalboard.utils.ApiResponse;
 import com.ckeeper.rentalboard.utils.S2S;
@@ -10,11 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/rentalboard")
@@ -71,6 +72,19 @@ public class RentalBoardController {
         try{
             s2S.sendToAuthServer(request);
             Map<String,Object> result = rentalBoardService.selectBoard(rentalBoardSelectRequest);
+            return ResponseEntity.ok(new ApiResponse(true,result));
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/view")
+    public ResponseEntity<ApiResponse> orderBoardSelectDetail(@RequestParam("board") long boardIdx,@RequestParam("viewer") String viewer,HttpServletRequest request){
+        try{
+            s2S.sendToAuthServer(request);
+            int result = rentalBoardService.selectBoardDetail(boardIdx,viewer);
             return ResponseEntity.ok(new ApiResponse(true,result));
         }catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
