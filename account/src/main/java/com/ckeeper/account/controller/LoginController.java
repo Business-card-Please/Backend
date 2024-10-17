@@ -8,16 +8,12 @@ import com.ckeeper.account.utils.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,8 +25,11 @@ public class LoginController {
 
     private final EtcService etcService;
 
-    @Value("${redirect.url}")
-    private String url;
+    @Value("${redirect.url1}")
+    private String url1;
+
+    @Value("${redirect.url2}")
+    private String url2;
 
     public LoginController(LoginService loginService, EtcService etcService) {
         this.loginService = loginService;
@@ -46,6 +45,7 @@ public class LoginController {
                 Map<String,String> detail = new HashMap<>();
                 detail.put("department1",info.get().getDepartment1());
                 detail.put("department2",info.get().getDepartment2());
+                detail.put("nickname",info.get().getNickname());
                 return ResponseEntity.ok(new ApiResponse(true,detail));
             }else{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Invalid nickname or password"));
@@ -60,28 +60,6 @@ public class LoginController {
         try{
             Boolean result = loginService.checkLogin(request,response);
             if(result){
-                String originUrl = request.getHeader("X-Original-URI");
-                if(originUrl.contains("/rentalboard/select")){
-                    Optional<DetailEntity> test = etcService.getAccountInfo(request);
-                    String data1 = URLEncoder.encode(test.get().getDepartment1(), StandardCharsets.UTF_8);
-                    String data2 = URLEncoder.encode(test.get().getDepartment2(), StandardCharsets.UTF_8);
-                    String redirectUrl = String.format("%s/rentalboard/select?data1=%s&data2=%s",url,data1,data2);
-                    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION, redirectUrl)
-                            .build();
-                }else if(originUrl.contains("/rentalboard/create")) {
-                    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION, url+"/rentalboard/create")
-                            .build();
-                }else if(originUrl.contains("/rentalboard/delete")){
-                    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION, url+"/rentalboard/delete")
-                            .build();
-                }else if(originUrl.contains("/rentalboard/update")){
-                    return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-                            .header(HttpHeaders.LOCATION, url+"/rentalboard/update")
-                            .build();
-                }
                 return ResponseEntity.ok(new ApiResponse(true,"-"));
             }else{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false,"Expired Token"));

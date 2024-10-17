@@ -6,15 +6,15 @@ import com.ckeeper.rentalboard.entity.RentalBoardEntity;
 import com.ckeeper.rentalboard.repository.RentalBoardRepository;
 import com.ckeeper.rentalboard.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -55,41 +55,47 @@ public class RentalBoardService {
         rentalBoardRepository.delete(entity.get());
     }
 
-    public List<RentalBoardEntity> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest,String department1, String department2) {
+    public Map<String,Object> selectBoard(RentalBoardSelectRequest rentalBoardSelectRequest) {
+        Page<RentalBoardEntity> result = null;
+        PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
+
         if(rentalBoardSelectRequest.getType().equals("default")) {
-            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
-            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeDefault(
+            result = rentalBoardRepository.findByDateTimeTypeDefault(
                     rentalBoardSelectRequest.getDatetime(),
-                    department1,
-                    department2,
+                    rentalBoardSelectRequest.getDepartment1(),
+                    rentalBoardSelectRequest.getDepartment2(),
                     pageRequest
             );
-
-            List<RentalBoardEntity> rentalBoardList = result.getContent();
-            return rentalBoardList;
         }else if(rentalBoardSelectRequest.getType().equals("hotkeyword")){
-            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
-            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeHotkeyword(
+            result = rentalBoardRepository.findByDateTimeTypeHotkeyword(
                     rentalBoardSelectRequest.getDatetime(),
-                    department1,
-                    department2,
+                    rentalBoardSelectRequest.getDepartment1(),
+                    rentalBoardSelectRequest.getDepartment2(),
                     rentalBoardSelectRequest.getData(),
                     pageRequest
             );
-
-            List<RentalBoardEntity> rentalBoardList = result.getContent();
-            return rentalBoardList;
         }else if(rentalBoardSelectRequest.getType().equals("search")){
-            PageRequest pageRequest = PageRequest.of(0, rentalBoardSelectRequest.getSize(), Sort.by(Sort.Direction.DESC, "cdatetime"));
-            Page<RentalBoardEntity> result = rentalBoardRepository.findByDateTimeTypeSearch(
+            result = rentalBoardRepository.findByDateTimeTypeSearch(
                     rentalBoardSelectRequest.getDatetime(),
                     rentalBoardSelectRequest.getData(),
                     pageRequest
             );
-
-            List<RentalBoardEntity> rentalBoardList = result.getContent();
-            return rentalBoardList;
         }
-        return null;
+
+        List<RentalBoardEntity> rentalBoardList = result.getContent();
+
+        Map<String,Object> test = new HashMap<>();
+        test.put("current",rentalBoardList);
+        test.put("isNext",result.hasNext());
+        return test;
+    }
+
+    public Integer selectBoardDetail(long boardIdx,String viewer){
+        Optional<RentalBoardEntity> entity = rentalBoardRepository.findById(boardIdx);
+        if(!entity.get().getNickname().equals(viewer)){
+            entity.get().setViewcount(entity.get().getViewcount()+1);
+            rentalBoardRepository.save(entity.get());
+        }
+        return entity.get().getViewcount();
     }
 }

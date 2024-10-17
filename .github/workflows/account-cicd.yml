@@ -2,9 +2,13 @@ name: Account Service CI/CD Pipeline
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'account/**'
   pull_request:
+    branches:
+      - main
     paths:
       - 'account/**'
 
