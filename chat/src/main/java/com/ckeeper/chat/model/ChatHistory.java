@@ -11,12 +11,11 @@ import lombok.Setter;
 public class ChatHistory {
     private String speaker;
     private String content;
-    private Map<String, Boolean> readStatus = new HashMap<>();
+    private Long datetime;
 
-    public ChatHistory(String speaker, String content) {
+    public ChatHistory(String speaker, String content, Long datetime) {
         this.speaker = speaker;
         this.content = content;
-        this.readStatus.put("host", false);
-        this.readStatus.put("guest", false);
+        this.datetime = datetime;
     }
 }

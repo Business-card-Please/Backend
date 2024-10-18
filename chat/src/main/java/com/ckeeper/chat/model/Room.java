@@ -1,5 +1,6 @@
 package com.ckeeper.chat.model;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -17,7 +18,7 @@ public class Room {
     private Long boardId;
     private String host;
     private String guest;
-    private Map<String,ChatHistory> history = new HashMap<>();
+    private Map<Integer,ChatHistory> history = new HashMap<>();
     private Contract contract;
     private int unReadHost;
     private int unReadGuest;

@@ -6,6 +6,10 @@ import com.ckeeper.chat.dto.MessageRequest;
 import com.ckeeper.chat.model.ChatHistory;
 import com.ckeeper.chat.model.Room;
 import com.ckeeper.chat.repository.RoomRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -72,14 +76,12 @@ public class ChatService {
            return false;
        }
 
-       ChatHistory newChat = new ChatHistory(speaker, dto.getContent());
-       room.getHistory().put(String.valueOf(System.currentTimeMillis()), newChat);
+       ChatHistory newChat = new ChatHistory(speaker, dto.getContent(),System.currentTimeMillis());
+       room.getHistory().put(room.getHistory().size()+1, newChat);
 
         if (dto.getSpeaker().equals(room.getHost())) {
-            newChat.getReadStatus().put("host", true);
             room.incrementUnReadGuest();
         } else {
-            newChat.getReadStatus().put("guest", true);
             room.incrementUnReadHost();
         }
 
@@ -91,5 +93,34 @@ public class ChatService {
            chatHandler.handleSendMessage(receiverSession, dto);
        }
        return true;
+   }
+
+   public List<Map<String, Object>> getRoomList(String nickname){
+       List<Room> lst = roomRepository.findByHostOrGuest(nickname);
+       List<Map<String, Object>> result = new ArrayList<>();
+       for(Room target:lst){
+            Map<String, Object> chatInfo = new HashMap<>();
+            chatInfo.put("id",target.getId());
+            chatInfo.put("boardId",target.getBoardId());
+            chatInfo.put("host",target.getHost());
+            chatInfo.put("guest",target.getGuest());
+            chatInfo.put("contract",target.getContract());
+            if(target.getHistory().size() == 0){
+                chatInfo.put("lastMessage",null);
+            }else{
+                chatInfo.put("lastMessage",target.getHistory().get(target.getHistory().size()).getContent());
+            }
+
+
+            int unRead= target.getUnReadHost();
+            if(nickname.equals(target.getGuest())){
+                unRead = target.getUnReadGuest();
+            }
+
+            chatInfo.put("unRead",unRead);
+
+            result.add(chatInfo);
+       }
+       return result;
    }
 }
