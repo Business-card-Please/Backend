@@ -99,27 +99,24 @@ public class ChatService {
        List<Room> lst = roomRepository.findByHostOrGuest(nickname);
        List<Map<String, Object>> result = new ArrayList<>();
        for(Room target:lst){
-            Map<String, Object> chatInfo = new HashMap<>();
-            chatInfo.put("id",target.getId());
-            chatInfo.put("boardId",target.getBoardId());
-            chatInfo.put("host",target.getHost());
-            chatInfo.put("guest",target.getGuest());
-            chatInfo.put("contract",target.getContract());
-            if(target.getHistory().size() == 0){
-                chatInfo.put("lastMessage",null);
-            }else{
-                chatInfo.put("lastMessage",target.getHistory().get(target.getHistory().size()).getContent());
-            }
+           if(target.getHistory().size() > 0) {
+               Map<String, Object> chatInfo = new HashMap<>();
+               chatInfo.put("id", target.getId());
+               chatInfo.put("boardId", target.getBoardId());
+               chatInfo.put("host", target.getHost());
+               chatInfo.put("guest", target.getGuest());
+               chatInfo.put("contract", target.getContract());
+               chatInfo.put("lastMessage", target.getHistory().get(target.getHistory().size()).getContent());
 
+               int unRead = target.getUnReadHost();
+               if (nickname.equals(target.getGuest())) {
+                   unRead = target.getUnReadGuest();
+               }
 
-            int unRead= target.getUnReadHost();
-            if(nickname.equals(target.getGuest())){
-                unRead = target.getUnReadGuest();
-            }
+               chatInfo.put("unRead", unRead);
+               result.add(chatInfo);
+           }
 
-            chatInfo.put("unRead",unRead);
-
-            result.add(chatInfo);
        }
        return result;
    }
