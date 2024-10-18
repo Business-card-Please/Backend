@@ -7,6 +7,8 @@ import com.ckeeper.chat.model.Room;
 import com.ckeeper.chat.service.ChatService;
 import com.ckeeper.chat.util.S2S;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -51,4 +53,16 @@ public class ChatController {
         }
     }
 
+    @GetMapping("/select-list")
+    public ResponseEntity<ApiResponse> orderSelectList(@RequestParam("nickname") String nickname,HttpServletRequest httpReq){
+        try{
+            this.s2S.sendToAuthServer(httpReq);
+            List<Map<String, Object>> result = chatService.getRoomList(nickname);
+            return ResponseEntity.ok(new ApiResponse(true,result));
+        }catch(RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ApiResponse(false,e.getMessage()));
+        }
+    }
 }
