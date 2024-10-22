@@ -27,7 +27,7 @@ public class ChatController {
         this.s2S = s2S;
     }
 
-    @PostMapping("/detail-select")
+    @PostMapping("/room/detail")
     public ResponseEntity<ApiResponse> orderDetailSelect(@RequestBody EnterRequest bodyReq,HttpServletRequest httpReq){
         try{
             this.s2S.sendToAuthServer(httpReq);
@@ -53,7 +53,7 @@ public class ChatController {
         }
     }
 
-    @GetMapping("/select-list")
+    @GetMapping("/room/list")
     public ResponseEntity<ApiResponse> orderSelectList(@RequestParam("nickname") String nickname,HttpServletRequest httpReq){
         try{
             this.s2S.sendToAuthServer(httpReq);
