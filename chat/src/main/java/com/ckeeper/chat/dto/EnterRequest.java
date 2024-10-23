@@ -9,4 +9,5 @@ public class EnterRequest {
     Long boardId;
     String host;
     String guest;
+    String enterer;
 }
