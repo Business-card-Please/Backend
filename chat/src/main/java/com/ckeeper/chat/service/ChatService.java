@@ -2,6 +2,7 @@ package com.ckeeper.chat.service;
 
 import com.ckeeper.chat.config.WebSocketChatHandler;
 import com.ckeeper.chat.dto.EnterRequest;
+import com.ckeeper.chat.dto.ExitRoomRequest;
 import com.ckeeper.chat.dto.MessageRequest;
 import com.ckeeper.chat.model.ChatHistory;
 import com.ckeeper.chat.model.Room;
@@ -39,6 +40,8 @@ public class ChatService {
        newRoom.setBoardId(dto.getBoardId());
        newRoom.setHost(dto.getHost());
        newRoom.setGuest(dto.getGuest());
+       newRoom.setHostStatus(false);
+       newRoom.setGuestStatus(false);
        roomRepository.save(newRoom);
        return newRoom;
    }
@@ -55,6 +58,21 @@ public class ChatService {
        roomRepository.save(room);
        return room;
    }
+
+    public void exitRoom(ExitRoomRequest dto) {
+        findRoom(dto.getRoomId())
+                .ifPresentOrElse(room -> {
+                    if (dto.getExiter().equals(room.getHost())) {
+                        room.setHostStatus(false);
+                    } else if (dto.getExiter().equals(room.getGuest())) {
+                        room.setGuestStatus(false);
+                    }
+                    roomRepository.save(room);
+                }, () -> {
+                    throw new RuntimeException("Room not found");
+                });
+    }
+
 
    public Room createOrEnterRoom(EnterRequest dto) {
        return findRoom(createRoomId(dto))
