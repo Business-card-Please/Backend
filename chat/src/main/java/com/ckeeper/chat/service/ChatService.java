@@ -46,8 +46,10 @@ public class ChatService {
    private Room enterRoom(EnterRequest dto, Room room) {
        if (dto.getGuest().equals(room.getHost())) {
            room.setUnReadHost(0);
+           room.setHostStatus(true);
        } else if (dto.getGuest().equals(room.getGuest())) {
            room.setUnReadGuest(0);
+           room.setGuestStatus(true);
        }
        roomRepository.save(room);
        return room;

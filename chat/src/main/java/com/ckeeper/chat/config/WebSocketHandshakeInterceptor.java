@@ -16,10 +16,9 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
             HttpServletRequest servletRequest = ((org.springframework.http.server.ServletServerHttpRequest) request).getServletRequest();
             URI uri = request.getURI();
 
-            // URL 쿼리 파라미터에서 nickname 값 가져오기
             String nickname = getQueryParameter(uri, "nickname");
             if (nickname != null) {
-                attributes.put("nickname", nickname);  // WebSocketSession에 nickname 저장
+                attributes.put("nickname", nickname);
                 System.out.println("WebSocket 핸드셰이크 - nickname: " + nickname);
             }
         }
@@ -37,7 +36,7 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=");
                 if (keyValue.length > 1 && keyValue[0].equals(param)) {
-                    return keyValue[1];  // 파라미터 값 반환
+                    return keyValue[1];
                 }
             }
         }

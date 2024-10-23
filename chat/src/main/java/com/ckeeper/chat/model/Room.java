@@ -22,6 +22,8 @@ public class Room {
     private Contract contract;
     private int unReadHost;
     private int unReadGuest;
+    private Boolean hostStatus;
+    private Boolean guestStatus;
 
     public void incrementUnReadHost() {
         unReadHost++;
@@ -29,13 +31,5 @@ public class Room {
 
     public void incrementUnReadGuest() {
         unReadGuest++;
-    }
-
-    public void setUnReadHost(int unreadForHost) {
-        this.unReadHost = unreadForHost;
-    }
-
-    public void setUnReadGuest(int unreadForGuest) {
-        this.unReadGuest = unreadForGuest;
     }
 }
