@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.expression.spel.ast.OpInc;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -26,67 +28,74 @@ public class ChatService {
        this.chatHandler = chatHandler;
    }
 
-   private String createRoomId(EnterRequest dto){
-       return dto.getBoardId()+"_"+dto.getHost()+"_"+dto.getGuest();
+   private String createRoomId(String boardId, String host, String guest){
+       return boardId+"_"+host+"_"+guest;
+   }
+
+   private String[] splitRoomId(String roomId){
+       return roomId.split("_");
    }
 
    private Optional<Room> findRoom(String roomId){
        return roomRepository.findById(roomId);
    }
 
-   private Room createRoom(EnterRequest dto){
+   private Room createRoom(String roomId){
        Room newRoom = new Room();
-       newRoom.setId(createRoomId(dto));
-       newRoom.setBoardId(dto.getBoardId());
-       newRoom.setHost(dto.getHost());
-       newRoom.setGuest(dto.getGuest());
+       String[] token = splitRoomId(roomId);
+
+       newRoom.setId(createRoomId(token[0],token[1],token[2]));
+       newRoom.setBoardId(Long.valueOf(token[0]));
+       newRoom.setHost(token[1]);
+       newRoom.setGuest(token[2]);
        newRoom.setHostStatus(false);
        newRoom.setGuestStatus(false);
-       roomRepository.save(newRoom);
+
        return newRoom;
    }
 
-   private Room enterRoom(EnterRequest dto, Room room) {
-       String enterer = dto.getEnterer();
-       if (enterer.equals(room.getHost())) {
-           room.setUnReadHost(0);
-           room.setHostStatus(true);
-       } else if (enterer.equals(room.getGuest())) {
-           room.setUnReadGuest(0);
-           room.setGuestStatus(true);
+   public Map<String,Object> enterRoom(EnterRequest dto) {
+       Optional<Room> room = findRoom(createRoomId(String.valueOf(dto.getBoardId()),dto.getHost(),dto.getGuest()));
+       if(room.isPresent()){
+           String enterer = dto.getEnterer();
+           if (enterer.equals(room.get().getHost())) {
+               room.get().setUnReadHost(0);
+               room.get().setHostStatus(true);
+           } else if (enterer.equals(room.get().getGuest())) {
+               room.get().setUnReadGuest(0);
+               room.get().setGuestStatus(true);
+           }
+           roomRepository.save(room.get());
+           Map<String,Object> ret = new HashMap<>();
+           ret.put("roomId",room.get().getId());
+           ret.put("contract",room.get().getContract());
+           ret.put("history",room.get().getHistory());
+           return ret;
        }
-       roomRepository.save(room);
-       return room;
+       return null;
    }
 
-    public void exitRoom(ExitRoomRequest dto) {
-        findRoom(dto.getRoomId())
-                .ifPresentOrElse(room -> {
-                    if (dto.getExiter().equals(room.getHost())) {
-                        room.setHostStatus(false);
-                    } else if (dto.getExiter().equals(room.getGuest())) {
-                        room.setGuestStatus(false);
-                    }
-                    roomRepository.save(room);
-                }, () -> {
-                    throw new RuntimeException("Room not found");
-                });
-    }
-
-
-   public Room createOrEnterRoom(EnterRequest dto) {
-       return findRoom(createRoomId(dto))
-               .map(room -> enterRoom(dto, room))
-               .orElseGet(() -> createRoom(dto));
+   public void exitRoom(ExitRoomRequest dto) {
+       Optional<Room> room = findRoom(dto.getRoomId());
+       if(room.isPresent()){
+           if (dto.getExiter().equals(room.get().getHost())) {
+               room.get().setHostStatus(false);
+           } else if (dto.getExiter().equals(room.get().getGuest())) {
+               room.get().setGuestStatus(false);
+           }
+           roomRepository.save(room.get());
+       } else {
+           throw new RuntimeException("Room not found");
+       }
    }
 
-   public Boolean sendOrSaveMsg(MessageRequest dto){
-       return findRoom(dto.getRoomId())
-               .map(room-> sendMsg(dto,room))
-               .orElseThrow(() -> new RuntimeException("Room not found"));
-   }
+   private Boolean sendMsg(MessageRequest dto){
+       Optional<Room> room = findRoom(dto.getRoomId());
+       if(room.isPresent()){
 
-   private Boolean sendMsg(MessageRequest dto,Room room){
+       }else{
+            room = Optional.of(createRoom(dto.getRoomId()));
+       }
        String speaker = dto.getSpeaker();
        String listner = null;
        if(speaker.equals(room.getHost())){
@@ -98,7 +107,7 @@ public class ChatService {
        }
 
        ChatHistory newChat = new ChatHistory(speaker, dto.getContent(),System.currentTimeMillis());
-       room.getHistory().put(room.getHistory().size()+1, newChat);
+       room.getHistory().add(newChat);
 
         if (dto.getSpeaker().equals(room.getHost())) {
             room.incrementUnReadGuest();
@@ -127,7 +136,7 @@ public class ChatService {
                chatInfo.put("host", target.getHost());
                chatInfo.put("guest", target.getGuest());
                chatInfo.put("contract", target.getContract());
-               chatInfo.put("lastMessage", target.getHistory().get(target.getHistory().size()).getContent());
+               chatInfo.put("lastMessage", target.getHistory().getLast());
 
                int unRead = target.getUnReadHost();
                if (nickname.equals(target.getGuest())) {

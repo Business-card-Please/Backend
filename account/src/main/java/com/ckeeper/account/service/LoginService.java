@@ -48,11 +48,14 @@ public class LoginService {
             if(accessToken != null){
                 try{
                     Claims claims = jwtUtil.validateToken(accessToken);
+                    System.out.println("accessToken 통과");
                     return true;
                 }catch(ExpiredJwtException e){
+                    System.out.println("accessToken 통과 못함");
                     if(refreshToken != null){
                         Claims refreshClaims = jwtUtil.validateToken(refreshToken);
                         jwtUtil.addJwtAccessToken(response,refreshClaims.getSubject());
+                        System.out.println("refreshToken 통과");
                         return true;
                     }
                 }

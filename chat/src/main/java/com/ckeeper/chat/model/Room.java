@@ -1,5 +1,6 @@
 package com.ckeeper.chat.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class Room {
     private Long boardId;
     private String host;
     private String guest;
-    private Map<Integer,ChatHistory> history = new HashMap<>();
+    private List<Object> history = new ArrayList<>();
     private Contract contract;
     private int unReadHost;
     private int unReadGuest;

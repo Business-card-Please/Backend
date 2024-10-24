@@ -32,7 +32,7 @@ public class ChatController {
     public ResponseEntity<ApiResponse> orderEnterRoom(@RequestBody EnterRequest bodyReq,HttpServletRequest httpReq){
         try{
             this.s2S.sendToAuthServer(httpReq);
-            Room result = chatService.createOrEnterRoom(bodyReq);
+            Object result = chatService.enterRoom(bodyReq);
             return ResponseEntity.ok(new ApiResponse(true,result));
         }catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));
