@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.expression.spel.ast.OpInc;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -55,7 +53,8 @@ public class ChatService {
    }
 
    public Map<String,Object> enterRoom(EnterRequest dto) {
-       Optional<Room> room = findRoom(createRoomId(String.valueOf(dto.getBoardId()),dto.getHost(),dto.getGuest()));
+       String[] token = splitRoomId(dto.getRoomId());
+       Optional<Room> room = findRoom(createRoomId(token[0],token[1],token[2]));
        if(room.isPresent()){
            String enterer = dto.getEnterer();
            if (enterer.equals(room.get().getHost())) {
@@ -89,38 +88,50 @@ public class ChatService {
        }
    }
 
-   private Boolean sendMsg(MessageRequest dto){
+   public Boolean sendMsg(MessageRequest dto){
        Optional<Room> room = findRoom(dto.getRoomId());
-       if(room.isPresent()){
-
-       }else{
-            room = Optional.of(createRoom(dto.getRoomId()));
-       }
        String speaker = dto.getSpeaker();
        String listner = null;
-       if(speaker.equals(room.getHost())){
-           listner = room.getGuest();
-       }else if(speaker.equals(room.getGuest())){
-           listner = room.getHost();
-       }else{
-           return false;
+
+       if(room.isEmpty()){
+           room = Optional.of(createRoom(dto.getRoomId()));
+       }
+
+       if(speaker.equals(room.get().getHost())){
+           listner = room.get().getGuest();
+       }else if(speaker.equals(room.get().getGuest())){
+           listner = room.get().getHost();
        }
 
        ChatHistory newChat = new ChatHistory(speaker, dto.getContent(),System.currentTimeMillis());
-       room.getHistory().add(newChat);
 
-        if (dto.getSpeaker().equals(room.getHost())) {
-            room.incrementUnReadGuest();
-        } else {
-            room.incrementUnReadHost();
-        }
+       room.get().getHistory().add(newChat);
 
-        roomRepository.save(room);
+       Map<String,Object> message = new HashMap<>();
+       message.put("roomId", dto.getRoomId());
+       message.put("speaker",dto.getSpeaker());
+       message.put("content",dto.getContent());
+       message.put("type","default");
+
+       if(room.get().getHistory().size() == 1){
+           room.get().setGuestStatus(true);
+           message.put("type","new-room");
+           message.put("contract",null);
+           message.put("lastMessage",dto.getContent());
+       }
+
+       if(listner.equals(room.get().getHost()) && !room.get().getHostStatus()){
+           room.get().incrementUnReadHost();
+       }else if(listner.equals(room.get().getGuest()) && !room.get().getGuestStatus()){
+           room.get().incrementUnReadGuest();
+       }
+
+       roomRepository.save(room.get());
 
        WebSocketSession receiverSession = chatHandler.getSession(listner);
 
        if (receiverSession != null && receiverSession.isOpen()) {
-           chatHandler.handleSendMessage(receiverSession, dto);
+           chatHandler.handleSendMessage(receiverSession, message);
        }
        return true;
    }
@@ -129,14 +140,11 @@ public class ChatService {
        List<Room> lst = roomRepository.findByHostOrGuest(nickname);
        List<Map<String, Object>> result = new ArrayList<>();
        for(Room target:lst){
-           if(target.getHistory().size() > 0) {
+           if(!target.getHistory().isEmpty()) {
                Map<String, Object> chatInfo = new HashMap<>();
                chatInfo.put("id", target.getId());
-               chatInfo.put("boardId", target.getBoardId());
-               chatInfo.put("host", target.getHost());
-               chatInfo.put("guest", target.getGuest());
                chatInfo.put("contract", target.getContract());
-               chatInfo.put("lastMessage", target.getHistory().getLast());
+               chatInfo.put("lastMessage", target.getHistory().getLast().getContent());
 
                int unRead = target.getUnReadHost();
                if (nickname.equals(target.getGuest())) {
@@ -146,7 +154,6 @@ public class ChatService {
                chatInfo.put("unRead", unRead);
                result.add(chatInfo);
            }
-
        }
        return result;
    }

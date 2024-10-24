@@ -58,7 +58,7 @@ public class ChatController {
     public ResponseEntity<ApiResponse> orderSendMessage(@RequestBody MessageRequest bodyReq,HttpServletRequest httpReq){
         try{
             this.s2S.sendToAuthServer(httpReq);
-            chatService.sendOrSaveMsg(bodyReq);
+            chatService.sendMsg(bodyReq);
             return ResponseEntity.ok(new ApiResponse(true,""));
         }catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized: " + e.getMessage()));

@@ -36,7 +36,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         }
     }
 
-    public void handleSendMessage(WebSocketSession session, MessageRequest msg) {
+    public void handleSendMessage(WebSocketSession session, Object msg) {
         try {
             String jsonMessage = objectMapper.writeValueAsString(msg);
             session.sendMessage(new TextMessage(jsonMessage));

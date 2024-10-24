@@ -19,7 +19,7 @@ public class Room {
     private Long boardId;
     private String host;
     private String guest;
-    private List<Object> history = new ArrayList<>();
+    private List<ChatHistory> history = new ArrayList<>();
     private Contract contract;
     private int unReadHost;
     private int unReadGuest;

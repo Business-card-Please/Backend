@@ -6,8 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EnterRequest {
-    Long boardId;
-    String host;
-    String guest;
+    String roomId;
     String enterer;
 }
